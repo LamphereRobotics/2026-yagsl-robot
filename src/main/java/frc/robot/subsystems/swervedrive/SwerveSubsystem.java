@@ -33,16 +33,15 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.Constants;
-import frc.robot.subsystems.swervedrive.Vision.Cameras;
+import frc.robot.Constants.LimelightConstants;
+import frc.robot.LimelightHelpers;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 import org.json.simple.parser.ParseException;
-import org.photonvision.targeting.PhotonPipelineResult;
 import swervelib.SwerveController;
 import swervelib.SwerveDrive;
 import swervelib.SwerveDriveTest;
@@ -63,11 +62,6 @@ public class SwerveSubsystem extends SubsystemBase {
    * Enable vision odometry updates while driving.
    */
   private final boolean visionDriveTest = false;
-
-  /**
-   * PhotonVision class to keep an accurate odometry.
-   */
-  private Vision vision;
 
   /**
    * Initialize {@link SwerveDrive} with the directory provided.
@@ -110,7 +104,7 @@ public class SwerveSubsystem extends SubsystemBase {
     // over the internal encoder and push the offsets onto it. Throws warning if not
     // possible
     if (visionDriveTest) {
-      setupPhotonVision();
+      setupLimelightVision();
       // Stop the odometry thread if we are using vision that way we can synchronize
       // updates better.
       swerveDrive.stopOdometryThread();
@@ -135,8 +129,8 @@ public class SwerveSubsystem extends SubsystemBase {
   /**
    * Setup the photon vision class.
    */
-  public void setupPhotonVision() {
-    vision = new Vision(swerveDrive::getPose, swerveDrive.field);
+  public void setupLimelightVision() {
+    // Any limelight config here
   }
 
   @Override
@@ -144,7 +138,33 @@ public class SwerveSubsystem extends SubsystemBase {
     // When vision is enabled we must manually update odometry in SwerveDrive
     if (visionDriveTest) {
       swerveDrive.updateOdometry();
-      vision.updatePoseEstimation(swerveDrive);
+      useMegaTag2VisionEstimate();
+    }
+  }
+
+  private void useMegaTag2VisionEstimate() {
+    boolean doRejectUpdate = false;
+
+    LimelightHelpers.SetRobotOrientation(LimelightConstants.limelightNameAprilTag,
+        swerveDrive.getPose().getRotation().getDegrees(), 0, 0, 0, 0, 0);
+    LimelightHelpers.PoseEstimate mt2 = LimelightHelpers
+        .getBotPoseEstimate_wpiBlue_MegaTag2(LimelightConstants.limelightNameAprilTag);
+    if (Math.abs(swerveDrive.getRobotVelocity().omegaRadiansPerSecond) > Units.degreesToRadians(720)) // if our angular
+    // velocity is greater
+    // than
+    // 720 degrees per second, ignore
+    // vision updates
+    {
+      doRejectUpdate = true;
+    }
+    if (mt2 == null || mt2.tagCount == 0) {
+      doRejectUpdate = true;
+    }
+    if (!doRejectUpdate) {
+      swerveDrive.setVisionMeasurementStdDevs(LimelightConstants.kMegaTag2VisionMeasurementStdDevs);
+      swerveDrive.addVisionMeasurement(
+          mt2.pose,
+          mt2.timestampSeconds);
     }
   }
 
@@ -224,18 +244,13 @@ public class SwerveSubsystem extends SubsystemBase {
    *
    * @return A {@link Command} which will run the alignment.
    */
-  public Command aimAtTarget(Cameras camera) {
+  public Command aimAtTarget() {
 
     return run(() -> {
-      Optional<PhotonPipelineResult> resultO = camera.getBestResult();
-      if (resultO.isPresent()) {
-        var result = resultO.get();
-        if (result.hasTargets()) {
-          drive(getTargetSpeeds(0,
-              0,
-              Rotation2d.fromDegrees(result.getBestTarget()
-                  .getYaw()))); // Not sure if this will work, more math may be required.
-        }
+      if (LimelightHelpers.getTargetCount(LimelightConstants.limelightNameShooter) > 0) {
+        drive(getTargetSpeeds(0,
+            0,
+            Rotation2d.fromDegrees(LimelightHelpers.getTX(LimelightConstants.limelightNameShooter))));
       }
     });
   }
