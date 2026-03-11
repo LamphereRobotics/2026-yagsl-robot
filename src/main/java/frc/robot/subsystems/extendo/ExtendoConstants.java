@@ -2,18 +2,18 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems.intake;
+package frc.robot.subsystems.extendo;
 
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 /** Add your docs here. */
-public final class IntakeConstants {
-  public static final int intakeMotorId = 15;
+public final class ExtendoConstants {
+  public static final int extendoMotorId = 14;
 
-  public static final SparkMaxConfig intakeConfig = new SparkMaxConfig();
+  public static final SparkMaxConfig extendoConfig = new SparkMaxConfig();
 
   static {
-    intakeConfig.inverted(true).idleMode(IdleMode.kBrake);
+    extendoConfig.inverted(true).idleMode(IdleMode.kBrake);
   }
 }

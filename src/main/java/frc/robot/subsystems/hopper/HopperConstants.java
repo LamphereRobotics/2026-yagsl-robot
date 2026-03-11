@@ -5,6 +5,7 @@
 package frc.robot.subsystems.hopper;
 
 import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 /** Add your docs here. */
 public final class HopperConstants {
@@ -15,6 +16,7 @@ public final class HopperConstants {
   public static final SparkMaxConfig indexerConfig = new SparkMaxConfig();
 
   static {
-    indexerConfig.inverted(true);
+    conveyorConfig.idleMode(IdleMode.kCoast);
+    indexerConfig.inverted(true).idleMode(IdleMode.kBrake);
   }
 }

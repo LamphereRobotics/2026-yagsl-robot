@@ -12,6 +12,7 @@ import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkMax;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Hopper extends SubsystemBase {
@@ -31,5 +32,32 @@ public class Hopper extends SubsystemBase {
         conveyorMotor.getAppliedOutput() * conveyorMotor.getBusVoltage());
     SmartDashboard.putNumber(getName() + "/indexer/voltage",
         indexerMotor.getAppliedOutput() * indexerMotor.getBusVoltage());
+  }
+
+  public Command inCommand() {
+    return run(this::in);
+  }
+
+  public void in() {
+    conveyorMotor.setVoltage(6);
+    indexerMotor.setVoltage(6);
+  }
+
+  public Command outCommand() {
+    return run(this::out);
+  }
+
+  public void out() {
+    conveyorMotor.setVoltage(-6);
+    indexerMotor.setVoltage(-6);
+  }
+
+  public Command stopCommand() {
+    return run(this::stop);
+  }
+
+  public void stop() {
+    conveyorMotor.stopMotor();
+    indexerMotor.stopMotor();
   }
 }

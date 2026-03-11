@@ -12,6 +12,7 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Shooter extends SubsystemBase {
@@ -36,5 +37,23 @@ public class Shooter extends SubsystemBase {
         shooterLeaderMotor.getAppliedOutput() * shooterLeaderMotor.getBusVoltage());
     SmartDashboard.putNumber(getName() + "/shooter/follower/voltage",
         shooterFollowerMotor.getAppliedOutput() * shooterFollowerMotor.getBusVoltage());
+  }
+
+  public Command shootCommand() {
+    return run(this::shoot);
+  }
+
+  public void shoot() {
+    kickerMotor.setVoltage(3.5);
+    shooterLeaderMotor.setVoltage(5.25);
+  }
+
+  public Command stopCommand() {
+    return run(this::stop);
+  }
+
+  public void stop() {
+    kickerMotor.stopMotor();
+    shooterLeaderMotor.stopMotor();
   }
 }

@@ -5,6 +5,7 @@
 package frc.robot.subsystems.shooter;
 
 import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 /** Add your docs here. */
 public final class ShooterConstants {
@@ -17,8 +18,10 @@ public final class ShooterConstants {
   public static final SparkMaxConfig shooterFollowerConfig = new SparkMaxConfig();
 
   static {
-    shooterLeaderConfig.inverted(true);
+    kickerConfig.idleMode(IdleMode.kCoast);
 
-    shooterLeaderConfig.follow(shooterLeaderMotorId, true);
+    shooterLeaderConfig.inverted(true).idleMode(IdleMode.kCoast);
+
+    shooterFollowerConfig.follow(shooterLeaderMotorId, true).idleMode(IdleMode.kCoast);
   }
 }

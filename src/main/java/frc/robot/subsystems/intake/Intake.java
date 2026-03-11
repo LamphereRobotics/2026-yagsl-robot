@@ -12,24 +12,45 @@ import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Intake extends SubsystemBase {
-  private final SparkMax extendoMotor = new SparkMax(extendoMotorId, MotorType.kBrushless);
   private final SparkMax intakeMotor = new SparkMax(intakeMotorId, MotorType.kBrushless);
 
   /** Creates a new Intake. */
   public Intake() {
-    extendoMotor.configure(extendoConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     intakeMotor.configure(intakeConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    SmartDashboard.putNumber(getName() + "/extendo/voltage",
-        extendoMotor.getAppliedOutput() * extendoMotor.getBusVoltage());
     SmartDashboard.putNumber(getName() + "/intake/voltage",
         intakeMotor.getAppliedOutput() * intakeMotor.getBusVoltage());
+  }
+
+  public Command inCommand() {
+    return run(this::in);
+  }
+
+  public void in() {
+    intakeMotor.setVoltage(12);
+  }
+
+  public Command outCommand() {
+    return run(this::in);
+  }
+
+  public void out() {
+    intakeMotor.setVoltage(-12);
+  }
+
+  public Command stopCommand() {
+    return run(this::stop);
+  }
+
+  public void stop() {
+    intakeMotor.stopMotor();
   }
 }

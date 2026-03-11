@@ -25,6 +25,10 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.swervedrive.drivebase.AbsoluteDriveAdv;
+import frc.robot.subsystems.extendo.Extendo;
+import frc.robot.subsystems.hopper.Hopper;
+import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import java.io.File;
 import swervelib.SwerveInputStream;
@@ -41,9 +45,15 @@ public class RobotContainer {
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   final CommandXboxController driverXbox = new CommandXboxController(0);
+  final CommandXboxController operatorXbox = new CommandXboxController(1);
+
   // The robot's subsystems and commands are defined here...
   private final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
       "swerve"));
+  private final Shooter shooter = new Shooter();
+  private final Extendo extendo = new Extendo();
+  private final Intake intake = new Intake();
+  private final Hopper hopper = new Hopper();
 
   // Establish a Sendable Chooser that will be able to be sent to the
   // SmartDashboard, allowing selection of desired auto
@@ -167,7 +177,11 @@ public class RobotContainer {
     if (RobotBase.isSimulation()) {
       drivebase.setDefaultCommand(driveFieldOrientedDirectAngleKeyboard);
     } else {
-      drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
+      drivebase.setDefaultCommand(driveAbsoluteAdv);
+      shooter.setDefaultCommand(shooter.stopCommand());
+      extendo.setDefaultCommand(extendo.moveCommand(() -> -operatorXbox.getLeftY()));
+      intake.setDefaultCommand(intake.stopCommand());
+      hopper.setDefaultCommand(hopper.stopCommand());
     }
 
     if (Robot.isSimulation()) {
@@ -204,12 +218,17 @@ public class RobotContainer {
       driverXbox.leftBumper().onTrue(Commands.none());
       driverXbox.rightBumper().onTrue(Commands.none());
     } else {
-      driverXbox.a().onTrue((Commands.runOnce(drivebase::zeroGyro)));
-      driverXbox.x().onTrue(Commands.runOnce(drivebase::addFakeVisionReading));
-      driverXbox.start().whileTrue(Commands.none());
-      driverXbox.back().whileTrue(Commands.none());
       driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
-      driverXbox.rightBumper().onTrue(Commands.none());
+      driverXbox.start().whileTrue(Commands.none());
+      driverXbox.back().whileTrue(Commands.runOnce(drivebase::zeroGyro));
+      driverXbox.leftTrigger().onTrue(Commands.none()); // TODO: Slow speed
+      driverXbox.rightTrigger().onTrue(Commands.none()); // TODO: High speed
+
+      operatorXbox.leftTrigger().whileTrue(shooter.shootCommand());
+      operatorXbox.a().whileTrue(intake.inCommand());
+      operatorXbox.b().whileTrue(intake.outCommand());
+      operatorXbox.x().whileTrue(hopper.inCommand());
+      operatorXbox.y().whileTrue(hopper.outCommand());
     }
   }
 
