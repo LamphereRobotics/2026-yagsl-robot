@@ -59,7 +59,9 @@ public class Extendo extends SubsystemBase {
 
   public void move(double input) {
     double output = input * 1.5;
-    if (Math.signum(output) > 0 && isRetracted() || Math.signum(output) < 0 && isFullyExtended()) {
+    if (Math.signum(output) < 0 && isRetracted()) {
+      stop();
+    } else if (Math.signum(output) > 0 && isFullyExtended()) {
       stop();
     } else {
       extendoMotor.setVoltage(output);
@@ -74,7 +76,7 @@ public class Extendo extends SubsystemBase {
     if (isRetracted()) {
       stop();
     } else {
-      extendoMotor.setVoltage(1.5);
+      extendoMotor.setVoltage(-1.5);
     }
   }
 
@@ -86,7 +88,7 @@ public class Extendo extends SubsystemBase {
     if (isFullyExtended()) {
       stop();
     } else {
-      extendoMotor.setVoltage(-1.5);
+      extendoMotor.setVoltage(1.5);
     }
   }
 
