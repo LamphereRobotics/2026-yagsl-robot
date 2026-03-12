@@ -10,15 +10,19 @@ import java.util.function.DoubleSupplier;
 
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.PersistMode;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Extendo extends SubsystemBase {
   private final SparkMax extendoMotor = new SparkMax(extendoMotorId, MotorType.kBrushless);
+  private final RelativeEncoder encoder = extendoMotor.getEncoder();
+  private final DigitalInput limitSwitch = new DigitalInput(limitSwitchPort);
 
   /** Creates a new Intake. */
   public Extendo() {
@@ -28,8 +32,25 @@ public class Extendo extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    SmartDashboard.putNumber(getName() + "/extendo/voltage",
+    SmartDashboard.putNumber(getName() + "/voltage",
         extendoMotor.getAppliedOutput() * extendoMotor.getBusVoltage());
+
+    SmartDashboard.putNumber(getName() + "/position", encoder.getPosition());
+
+    SmartDashboard.putBoolean(getName() + "/isRetracted", isRetracted());
+    SmartDashboard.putBoolean(getName() + "/isFullyExtended", isFullyExtended());
+
+    if (isRetracted()) {
+      encoder.setPosition(0);
+    }
+  }
+
+  public boolean isRetracted() {
+    return !limitSwitch.get();
+  }
+
+  public boolean isFullyExtended() {
+    return encoder.getPosition() >= 9.59;
   }
 
   public Command moveCommand(DoubleSupplier input) {
@@ -37,7 +58,12 @@ public class Extendo extends SubsystemBase {
   }
 
   public void move(double input) {
-    extendoMotor.setVoltage(input * 1.5);
+    double output = input * 1.5;
+    if (Math.signum(output) > 0 && isRetracted() || Math.signum(output) < 0 && isFullyExtended()) {
+      stop();
+    } else {
+      extendoMotor.setVoltage(output);
+    }
   }
 
   public Command retractCommand() {
@@ -45,7 +71,11 @@ public class Extendo extends SubsystemBase {
   }
 
   public void retract() {
-    extendoMotor.setVoltage(1.5);
+    if (isRetracted()) {
+      stop();
+    } else {
+      extendoMotor.setVoltage(1.5);
+    }
   }
 
   public Command extendCommand() {
@@ -53,7 +83,11 @@ public class Extendo extends SubsystemBase {
   }
 
   public void extend() {
-    extendoMotor.setVoltage(-1.5);
+    if (isFullyExtended()) {
+      stop();
+    } else {
+      extendoMotor.setVoltage(-1.5);
+    }
   }
 
   public Command stopCommand() {

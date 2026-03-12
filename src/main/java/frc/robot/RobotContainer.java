@@ -177,7 +177,7 @@ public class RobotContainer {
     if (RobotBase.isSimulation()) {
       drivebase.setDefaultCommand(driveFieldOrientedDirectAngleKeyboard);
     } else {
-      drivebase.setDefaultCommand(driveAbsoluteAdv);
+      drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
       shooter.setDefaultCommand(shooter.stopCommand());
       extendo.setDefaultCommand(extendo.moveCommand(() -> -operatorXbox.getLeftY()));
       intake.setDefaultCommand(intake.stopCommand());
@@ -225,6 +225,8 @@ public class RobotContainer {
       driverXbox.rightTrigger().onTrue(Commands.none()); // TODO: High speed
 
       operatorXbox.leftTrigger().whileTrue(shooter.shootCommand());
+      operatorXbox.rightTrigger()
+          .whileTrue(shooter.shootCommand().withTimeout(1.0).andThen(intake.inCommand().alongWith(hopper.inCommand())));
       operatorXbox.a().whileTrue(intake.inCommand());
       operatorXbox.b().whileTrue(intake.outCommand());
       operatorXbox.x().whileTrue(hopper.inCommand());

@@ -10,6 +10,7 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 /** Add your docs here. */
 public final class ExtendoConstants {
   public static final int extendoMotorId = 14;
+  public static final int limitSwitchPort = 9;
 
   public static final SparkMaxConfig extendoConfig = new SparkMaxConfig();
 
