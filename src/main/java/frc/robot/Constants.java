@@ -4,8 +4,12 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Inches;
+
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.Vector;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
@@ -59,5 +63,10 @@ public final class Constants {
     public static final String limelightNameAprilTag = "limelight";
     public static final String limelightNameShooter = "shooter";
     public static final Vector<N3> kMegaTag2VisionMeasurementStdDevs = VecBuilder.fill(.7, .7, 9999999);
+  }
+
+  public static final class TargetConstants {
+    public static final Pose2d blueHubPose = new Pose2d(Inches.of(182), Inches.of(159), Rotation2d.kZero);
+    public static final Pose2d redHubPose = new Pose2d(Inches.of(469), Inches.of(159), Rotation2d.kZero);
   }
 }

@@ -30,6 +30,9 @@ import frc.robot.subsystems.hopper.Hopper;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
+
+import static edu.wpi.first.units.Units.Inches;
+
 import java.io.File;
 import swervelib.SwerveInputStream;
 
@@ -116,6 +119,7 @@ public class RobotContainer {
           0));
 
   Command fullShootCommand() {
+    driveAngularVelocity.aim(null);
     return shooter.shootCommand().withTimeout(1.0)
         .andThen(intake.inCommand().alongWith(hopper.inCommand()));
   };
@@ -226,6 +230,7 @@ public class RobotContainer {
           drivebase.setMaxSpeed(Constants.MAX_SPEED * 0.5),
           drivebase::resetMaxSpeed)); // TODO: Slow speed
       driverXbox.rightTrigger().onTrue(Commands.none()); // TODO: High speed
+      driverXbox.rightBumper().and(null)
 
       operatorXbox.leftTrigger().whileTrue(shooter.shootCommand());
       operatorXbox.rightTrigger()
