@@ -33,9 +33,9 @@ public class Shooter extends SubsystemBase {
     // This method will be called once per scheduler run
     SmartDashboard.putNumber(getName() + "/kicker/voltage",
         kickerMotor.getAppliedOutput() * kickerMotor.getBusVoltage());
-    SmartDashboard.putNumber(getName() + "/shooter/leader/voltage",
+    SmartDashboard.putNumber(getName() + "/leader/voltage",
         shooterLeaderMotor.getAppliedOutput() * shooterLeaderMotor.getBusVoltage());
-    SmartDashboard.putNumber(getName() + "/shooter/follower/voltage",
+    SmartDashboard.putNumber(getName() + "/follower/voltage",
         shooterFollowerMotor.getAppliedOutput() * shooterFollowerMotor.getBusVoltage());
   }
 

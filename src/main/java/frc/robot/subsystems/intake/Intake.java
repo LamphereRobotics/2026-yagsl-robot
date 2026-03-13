@@ -26,7 +26,7 @@ public class Intake extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    SmartDashboard.putNumber(getName() + "/intake/voltage",
+    SmartDashboard.putNumber(getName() + "/voltage",
         intakeMotor.getAppliedOutput() * intakeMotor.getBusVoltage());
   }
 
