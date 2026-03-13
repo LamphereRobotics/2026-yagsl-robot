@@ -9,6 +9,7 @@ import static frc.robot.subsystems.hopper.HopperConstants.*;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.PersistMode;
 import com.revrobotics.ResetMode;
+import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkMax;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -17,7 +18,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Hopper extends SubsystemBase {
   private final SparkMax conveyorMotor = new SparkMax(conveyorMotorId, MotorType.kBrushless);
-  private final SparkMax indexerMotor = new SparkMax(indexerMotorId, MotorType.kBrushless);
+  private final SparkFlex indexerMotor = new SparkFlex(indexerMotorId, MotorType.kBrushless);
 
   /** Creates a new Hopper. */
   public Hopper() {
