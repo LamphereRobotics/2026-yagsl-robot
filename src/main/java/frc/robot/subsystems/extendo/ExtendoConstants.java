@@ -4,8 +4,8 @@
 
 package frc.robot.subsystems.extendo;
 
-import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.config.SparkMaxConfig;
 
 /** Add your docs here. */
 public final class ExtendoConstants {
