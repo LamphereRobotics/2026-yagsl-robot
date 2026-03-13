@@ -115,8 +115,10 @@ public class RobotContainer {
       .translationHeadingOffset(Rotation2d.fromDegrees(
           0));
 
-  final Command fullShootCommand = shooter.shootCommand().withTimeout(1.0)
-      .andThen(intake.inCommand().alongWith(hopper.inCommand()));
+  Command fullShootCommand() {
+    return shooter.shootCommand().withTimeout(1.0)
+        .andThen(intake.inCommand().alongWith(hopper.inCommand()));
+  };
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -127,7 +129,7 @@ public class RobotContainer {
     DriverStation.silenceJoystickConnectionWarning(true);
 
     // Create the NamedCommands that will be used in PathPlanner
-    NamedCommands.registerCommand("Shoot", fullShootCommand.withTimeout(6.0));
+    NamedCommands.registerCommand("Shoot", fullShootCommand().withTimeout(6.0));
 
     // Have the autoChooser pull in all PathPlanner autos as options
     autoChooser = AutoBuilder.buildAutoChooser();
@@ -225,7 +227,7 @@ public class RobotContainer {
 
       operatorXbox.leftTrigger().whileTrue(shooter.shootCommand());
       operatorXbox.rightTrigger()
-          .whileTrue(fullShootCommand);
+          .whileTrue(fullShootCommand());
       operatorXbox.a().whileTrue(intake.inCommand());
       operatorXbox.b().whileTrue(intake.outCommand());
       operatorXbox.x().whileTrue(hopper.inCommand());
