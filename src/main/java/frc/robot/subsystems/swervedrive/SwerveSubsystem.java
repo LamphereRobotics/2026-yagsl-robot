@@ -373,6 +373,7 @@ public class SwerveSubsystem extends SubsystemBase {
    * @return a Command that centers the modules of the SwerveDrive subsystem
    */
   public Command centerModulesCommand() {
+    swerveDrive.setMaximumAllowableSpeeds(0, 0);
     return run(() -> Arrays.asList(swerveDrive.getModules())
         .forEach(it -> it.setAngle(0.0)));
   }
@@ -729,5 +730,15 @@ public class SwerveSubsystem extends SubsystemBase {
    */
   public SwerveDrive getSwerveDrive() {
     return swerveDrive;
+  }
+
+  public Runnable setMaxSpeed(double speed) {
+    return () -> {
+      swerveDrive.setMaximumAllowableSpeeds(speed, swerveDrive.getMaximumChassisAngularVelocity());
+    };
+  }
+
+  public void resetMaxSpeed() {
+    swerveDrive.setMaximumAllowableSpeeds(Constants.MAX_SPEED, swerveDrive.getMaximumChassisAngularVelocity());
   }
 }

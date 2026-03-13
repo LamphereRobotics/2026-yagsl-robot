@@ -222,13 +222,17 @@ public class RobotContainer {
       driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
       driverXbox.start().whileTrue(Commands.none());
       driverXbox.back().whileTrue(Commands.runOnce(drivebase::zeroGyro));
-      driverXbox.leftTrigger().onTrue(Commands.none()); // TODO: Slow speed
+      driverXbox.leftTrigger().onTrue(Commands.startEnd(
+          drivebase.setMaxSpeed(Constants.MAX_SPEED * 0.5),
+          drivebase::resetMaxSpeed)); // TODO: Slow speed
       driverXbox.rightTrigger().onTrue(Commands.none()); // TODO: High speed
 
       operatorXbox.leftTrigger().whileTrue(shooter.shootCommand());
       operatorXbox.rightTrigger()
           .whileTrue(fullShootCommand());
-      operatorXbox.a().whileTrue(intake.inCommand());
+      operatorXbox.a().whileTrue(intake.inCommand().alongWith(Commands.runEnd(
+          drivebase.setMaxSpeed(Constants.MAX_SPEED * 0.5),
+          drivebase::resetMaxSpeed))); // TODO: slow drive while intake is running
       operatorXbox.b().whileTrue(intake.outCommand());
       operatorXbox.x().whileTrue(hopper.inCommand());
       operatorXbox.y().whileTrue(hopper.outCommand());
