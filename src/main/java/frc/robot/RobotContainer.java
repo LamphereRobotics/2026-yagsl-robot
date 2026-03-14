@@ -136,6 +136,11 @@ public class RobotContainer {
                                 .andThen(intake.inCommand().alongWith(hopper.inCommand()));
         };
 
+        Command agitateCommand() {
+                return extendo.retractCommand().until(extendo::isAgitateRetracted)
+                                .andThen(extendo.extendCommand().until(extendo::isAgitateExtend)).repeatedly();
+        };
+
         /**
          * The container for the robot. Contains subsystems, OI devices, and commands.
          */
@@ -145,7 +150,8 @@ public class RobotContainer {
                 DriverStation.silenceJoystickConnectionWarning(true);
 
                 // Create the NamedCommands that will be used in PathPlanner
-                NamedCommands.registerCommand("Shoot", fullShootBlindCommand().withTimeout(10.0));
+                NamedCommands.registerCommand("Shoot",
+                                fullShootBlindCommand().alongWith(agitateCommand()).withTimeout(10.0));
 
                 // Have the autoChooser pull in all PathPlanner autos as options
                 autoChooser = AutoBuilder.buildAutoChooser();
@@ -254,6 +260,7 @@ public class RobotContainer {
                         driverXbox.rightTrigger().whileTrue(driveAimHub);
 
                         operatorXbox.leftTrigger().whileTrue(shooter.shootBlindCommand());
+                        operatorXbox.leftBumper().whileTrue(agitateCommand());
                         operatorXbox.rightTrigger()
                                         .whileTrue(fullShootBlindCommand());
                         operatorXbox.rightBumper()
