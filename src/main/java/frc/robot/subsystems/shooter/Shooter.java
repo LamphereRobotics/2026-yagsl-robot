@@ -8,7 +8,7 @@ import static frc.robot.subsystems.shooter.ShooterConstants.*;
 
 import com.revrobotics.PersistMode;
 import com.revrobotics.ResetMode;
-import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -16,9 +16,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Shooter extends SubsystemBase {
-  private final SparkMax kickerMotor = new SparkMax(kickerMotorId, MotorType.kBrushless);
-  private final SparkMax shooterLeaderMotor = new SparkMax(shooterLeaderMotorId, MotorType.kBrushless);
-  private final SparkMax shooterFollowerMotor = new SparkMax(shooterFollowerMotorId, MotorType.kBrushless);
+  private final SparkFlex kickerMotor = new SparkFlex(kickerMotorId, MotorType.kBrushless);
+  private final SparkFlex shooterLeaderMotor = new SparkFlex(shooterLeaderMotorId, MotorType.kBrushless);
+  private final SparkFlex shooterFollowerMotor = new SparkFlex(shooterFollowerMotorId, MotorType.kBrushless);
 
   /** Creates a new Shooter. */
   public Shooter() {
