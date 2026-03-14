@@ -60,8 +60,8 @@ public final class Constants {
 
   public static final class LimelightConstants {
     public static final boolean kUseMegaTag2 = true;
-    public static final String limelightNameAprilTag = "limelight";
-    public static final String limelightNameShooter = "shooter";
+    public static final String limelightNameAprilTag = "limelight-april";
+    public static final String limelightNameShooter = "limelight-shooter";
     public static final Vector<N3> kMegaTag2VisionMeasurementStdDevs = VecBuilder.fill(.7, .7, 9999999);
   }
 
