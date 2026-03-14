@@ -59,7 +59,7 @@ public class Shooter extends SubsystemBase {
   public void shootHub(Distance distanceToHub) {
     final double output = distanceToHub.in(Meters) * voltPerMeter;
     kick();
-    shooterLeaderMotor.setVoltage(output);
+    shoot(output);
   }
 
   public Command shootBlindCommand() {
@@ -68,7 +68,7 @@ public class Shooter extends SubsystemBase {
 
   public void shootBlind() {
     kick();
-    shoot(5.25);
+    shoot(blindVoltage);
   }
 
   private void shoot(double output) {
@@ -77,7 +77,7 @@ public class Shooter extends SubsystemBase {
   }
 
   private void kick() {
-    kickerMotor.setVoltage(3.5);
+    kickerMotor.setVoltage(kickVoltage);
   }
 
   public Command stopCommand() {

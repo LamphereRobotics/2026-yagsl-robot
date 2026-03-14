@@ -13,6 +13,8 @@ public final class ShooterConstants {
   public static final int shooterLeaderMotorId = 10;
   public static final int shooterFollowerMotorId = 11;
 
+  public static final double kickVoltage = 3.5;
+
   public static final double blindVoltage = 5.25;
   public static final double blindTargetVelocity = 2800.0;
   public static final double blindDistance = 3.6;
