@@ -4,7 +4,10 @@
 
 package frc.robot.subsystems.shooter;
 
+import static edu.wpi.first.units.Units.Meters;
 import static frc.robot.subsystems.shooter.ShooterConstants.*;
+
+import java.util.function.Supplier;
 
 import com.revrobotics.PersistMode;
 import com.revrobotics.RelativeEncoder;
@@ -12,6 +15,7 @@ import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -22,6 +26,8 @@ public class Shooter extends SubsystemBase {
   private final SparkFlex shooterFollowerMotor = new SparkFlex(shooterFollowerMotorId, MotorType.kBrushless);
 
   private final RelativeEncoder shooterEncoder = shooterLeaderMotor.getEncoder();
+
+  private double targetVelocity = 0.0;
 
   /** Creates a new Shooter. */
   public Shooter() {
@@ -44,13 +50,34 @@ public class Shooter extends SubsystemBase {
         shooterFollowerMotor.getAppliedOutput() * shooterFollowerMotor.getBusVoltage());
   }
 
-  public Command shootCommand() {
-    return run(this::shoot);
+  public Command shootHubCommand(Supplier<Distance> distanceToHub) {
+    return run(() -> {
+      shootHub(distanceToHub.get());
+    });
   }
 
-  public void shoot() {
+  public void shootHub(Distance distanceToHub) {
+    final double output = distanceToHub.in(Meters) * voltPerMeter;
+    kick();
+    shooterLeaderMotor.setVoltage(output);
+  }
+
+  public Command shootBlindCommand() {
+    return run(this::shootBlind);
+  }
+
+  public void shootBlind() {
+    kick();
+    shoot(5.25);
+  }
+
+  private void shoot(double output) {
+    targetVelocity = output * velocityPerVolt;
+    shooterLeaderMotor.setVoltage(output);
+  }
+
+  private void kick() {
     kickerMotor.setVoltage(3.5);
-    shooterLeaderMotor.setVoltage(5.25);
   }
 
   public Command stopCommand() {
@@ -58,11 +85,12 @@ public class Shooter extends SubsystemBase {
   }
 
   public void stop() {
+    targetVelocity = 0.0;
     kickerMotor.stopMotor();
     shooterLeaderMotor.stopMotor();
   }
 
   public boolean isReadyToShoot() {
-    return shooterEncoder.getVelocity() > shooterTargetVelocity;
+    return targetVelocity > 100.0 && shooterEncoder.getVelocity() > targetVelocity;
   }
 }

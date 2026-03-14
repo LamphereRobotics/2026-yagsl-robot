@@ -5,6 +5,7 @@
 package frc.robot.subsystems.swervedrive;
 
 import static edu.wpi.first.units.Units.Meter;
+import static edu.wpi.first.units.Units.Meters;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
@@ -25,8 +26,10 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -34,6 +37,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.Constants;
 import frc.robot.Constants.LimelightConstants;
+import frc.robot.Constants.TargetConstants;
 import frc.robot.LimelightHelpers;
 import java.io.File;
 import java.io.IOException;
@@ -140,6 +144,8 @@ public class SwerveSubsystem extends SubsystemBase {
       swerveDrive.updateOdometry();
       useMegaTag2VisionEstimate();
     }
+
+    SmartDashboard.putNumber(getName() + "/distanceToHub", getDistanceToHub().in(Meters));
   }
 
   private void useMegaTag2VisionEstimate() {
@@ -739,5 +745,9 @@ public class SwerveSubsystem extends SubsystemBase {
 
   public void resetMaxSpeed() {
     swerveDrive.setMaximumAllowableSpeeds(Constants.MAX_SPEED, swerveDrive.getMaximumChassisAngularVelocity());
+  }
+
+  public Distance getDistanceToHub() {
+    return Meters.of(getPose().getTranslation().getDistance(TargetConstants.blueHubPose.getTranslation()));
   }
 }
