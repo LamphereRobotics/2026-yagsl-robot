@@ -145,7 +145,7 @@ public class RobotContainer {
                 DriverStation.silenceJoystickConnectionWarning(true);
 
                 // Create the NamedCommands that will be used in PathPlanner
-                NamedCommands.registerCommand("Shoot", fullShootBlindCommand().withTimeout(6.0));
+                NamedCommands.registerCommand("Shoot", fullShootBlindCommand().withTimeout(10.0));
 
                 // Have the autoChooser pull in all PathPlanner autos as options
                 autoChooser = AutoBuilder.buildAutoChooser();
