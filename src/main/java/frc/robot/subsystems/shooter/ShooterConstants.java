@@ -13,6 +13,8 @@ public final class ShooterConstants {
   public static final int shooterLeaderMotorId = 10;
   public static final int shooterFollowerMotorId = 11;
 
+  public static final double shooterTargetVelocity = 2800.0;
+
   public static final SparkFlexConfig kickerConfig = new SparkFlexConfig();
   public static final SparkFlexConfig shooterLeaderConfig = new SparkFlexConfig();
   public static final SparkFlexConfig shooterFollowerConfig = new SparkFlexConfig();

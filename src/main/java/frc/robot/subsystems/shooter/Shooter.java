@@ -7,6 +7,7 @@ package frc.robot.subsystems.shooter;
 import static frc.robot.subsystems.shooter.ShooterConstants.*;
 
 import com.revrobotics.PersistMode;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -20,12 +21,15 @@ public class Shooter extends SubsystemBase {
   private final SparkFlex shooterLeaderMotor = new SparkFlex(shooterLeaderMotorId, MotorType.kBrushless);
   private final SparkFlex shooterFollowerMotor = new SparkFlex(shooterFollowerMotorId, MotorType.kBrushless);
 
+  private final RelativeEncoder shooterEncoder = shooterLeaderMotor.getEncoder();
+
   /** Creates a new Shooter. */
   public Shooter() {
     kickerMotor.configure(kickerConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     shooterLeaderMotor.configure(shooterLeaderConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     shooterFollowerMotor.configure(shooterFollowerConfig, ResetMode.kResetSafeParameters,
         PersistMode.kPersistParameters);
+
   }
 
   @Override
@@ -35,6 +39,7 @@ public class Shooter extends SubsystemBase {
         kickerMotor.getAppliedOutput() * kickerMotor.getBusVoltage());
     SmartDashboard.putNumber(getName() + "/leader/voltage",
         shooterLeaderMotor.getAppliedOutput() * shooterLeaderMotor.getBusVoltage());
+    SmartDashboard.putNumber(getName() + "/leader/velocity", shooterEncoder.getVelocity());
     SmartDashboard.putNumber(getName() + "/follower/voltage",
         shooterFollowerMotor.getAppliedOutput() * shooterFollowerMotor.getBusVoltage());
   }
@@ -55,5 +60,9 @@ public class Shooter extends SubsystemBase {
   public void stop() {
     kickerMotor.stopMotor();
     shooterLeaderMotor.stopMotor();
+  }
+
+  public boolean isReadyToShoot() {
+    return shooterEncoder.getVelocity() > shooterTargetVelocity;
   }
 }

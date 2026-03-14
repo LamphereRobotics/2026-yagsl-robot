@@ -126,7 +126,7 @@ public class RobotContainer {
                     0));
 
     Command fullShootCommand() {
-        return shooter.shootCommand().withTimeout(1.0)
+        return shooter.shootCommand().until(shooter::isReadyToShoot)
                 .andThen(intake.inCommand().alongWith(hopper.inCommand()));
     };
 
