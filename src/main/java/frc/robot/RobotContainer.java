@@ -24,14 +24,13 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.Constants.TargetConstants;
 import frc.robot.commands.swervedrive.drivebase.AbsoluteDriveAdv;
 import frc.robot.subsystems.extendo.Extendo;
 import frc.robot.subsystems.hopper.Hopper;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
-
-import static edu.wpi.first.units.Units.Inches;
 
 import java.io.File;
 import swervelib.SwerveInputStream;
@@ -74,6 +73,13 @@ public class RobotContainer {
             .scaleTranslation(0.8)
             .allianceRelativeControl(true);
 
+    SwerveInputStream driveAim = driveAngularVelocity.copy()
+            .aimHeadingOffset(Rotation2d.k180deg)
+            .aimHeadingOffset(true)
+            .aimWhile(true);
+    SwerveInputStream driveAimBlueHubInputs = driveAim.copy().aim(TargetConstants.blueHubPose);
+    SwerveInputStream driveAimRedHubInputs = driveAim.copy().aim(TargetConstants.redHubPose);
+
     /**
      * Clone's the angular velocity input stream and converts it to a fieldRelative
      * input stream.
@@ -97,6 +103,7 @@ public class RobotContainer {
             .deadband(OperatorConstants.DEADBAND)
             .scaleTranslation(0.8)
             .allianceRelativeControl(true);
+
     // Derive the heading axis with math!
     SwerveInputStream driveDirectAngleKeyboard = driveAngularVelocityKeyboard.copy()
             .withControllerHeadingAxis(() -> Math.sin(
@@ -168,6 +175,10 @@ public class RobotContainer {
         Command driveFieldOrientedAnglularVelocityKeyboard = drivebase.driveFieldOriented(driveAngularVelocityKeyboard);
         Command driveSetpointGenKeyboard = drivebase.driveWithSetpointGeneratorFieldRelative(
                 driveDirectAngleKeyboard);
+        Command driveAimHub = Commands.either(
+                drivebase.driveFieldOriented(driveAimRedHubInputs),
+                drivebase.driveFieldOriented(driveAimBlueHubInputs),
+                drivebase::isRedAlliance);
 
         AbsoluteDriveAdv driveAbsoluteAdv = new AbsoluteDriveAdv(drivebase,
                 () -> MathUtil.applyDeadband(-driverXbox.getLeftY(), OperatorConstants.DEADBAND),
@@ -228,15 +239,15 @@ public class RobotContainer {
             // driverXbox.back().whileTrue(Commands.runOnce(drivebase::zeroGyro));
             driverXbox.leftTrigger().whileTrue(Commands.runEnd(
                     drivebase.setMaxSpeed(Constants.MAX_SPEED * 0.5),
-                    drivebase::resetMaxSpeed)); // TODO: Slow speed
-            driverXbox.rightTrigger().onTrue(Commands.none()); // TODO: High speed
+                    drivebase::resetMaxSpeed));
+            driverXbox.rightTrigger().whileTrue(driveAimHub);
 
             operatorXbox.leftTrigger().whileTrue(shooter.shootCommand());
             operatorXbox.rightTrigger()
                     .whileTrue(fullShootCommand());
             operatorXbox.a().whileTrue(intake.inCommand().alongWith(Commands.runEnd(
                     drivebase.setMaxSpeed(Constants.MAX_SPEED * 0.5),
-                    drivebase::resetMaxSpeed))); // TODO: slow drive while intake is running
+                    drivebase::resetMaxSpeed)));
             operatorXbox.b().whileTrue(intake.outCommand());
             operatorXbox.x().whileTrue(hopper.inCommand());
             operatorXbox.y().whileTrue(hopper.outCommand());
