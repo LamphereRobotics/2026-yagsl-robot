@@ -150,8 +150,8 @@ public class SwerveSubsystem extends SubsystemBase {
   }
 
   private void useMegaTag2VisionEstimate() {
-    if (Math.abs(swerveDrive.getRobotVelocity().omegaRadiansPerSecond) > Units.degreesToRadians(360)) {
-      // if our angular velocity is greater than 360 degrees per second, ignore vision
+    if (Math.abs(swerveDrive.getRobotVelocity().omegaRadiansPerSecond) > Units.degreesToRadians(720)) {
+      // if our angular velocity is greater than 720 degrees per second, ignore vision
       // updates
       return;
     }
