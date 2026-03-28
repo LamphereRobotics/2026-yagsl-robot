@@ -38,7 +38,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.Constants;
 import frc.robot.Constants.LimelightConstants;
 import frc.robot.Constants.TargetConstants;
-import frc.robot.LimelightHelpers;
+import frc.robot.subsystems.vision.Vision;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
@@ -142,6 +142,7 @@ public class SwerveSubsystem extends SubsystemBase {
     // When vision is enabled we must manually update odometry in SwerveDrive
     if (visionDriveTest) {
       swerveDrive.updateOdometry();
+      Vision.periodic(getPose());
       useMegaTag2VisionEstimate();
     }
 
@@ -149,32 +150,19 @@ public class SwerveSubsystem extends SubsystemBase {
   }
 
   private void useMegaTag2VisionEstimate() {
-    boolean doRejectUpdate = false;
-    if (DriverStation.isDisabled()) {
-      LimelightHelpers.SetIMUMode(LimelightConstants.limelightNameAprilTag, 1); // Seed internal IMU
-    } else {
-      LimelightHelpers.SetIMUMode(LimelightConstants.limelightNameAprilTag, 4); // Use internal IMU + external IMU
-    }
-
-    LimelightHelpers.SetRobotOrientation(LimelightConstants.limelightNameAprilTag,
-        swerveDrive.getPose().getRotation().getDegrees(), 0, 0, 0, 0, 0);
-    LimelightHelpers.PoseEstimate mt2 = LimelightHelpers
-        .getBotPoseEstimate_wpiBlue_MegaTag2(LimelightConstants.limelightNameAprilTag);
-
     if (Math.abs(swerveDrive.getRobotVelocity().omegaRadiansPerSecond) > Units.degreesToRadians(360)) {
       // if our angular velocity is greater than 360 degrees per second, ignore vision
       // updates
-      doRejectUpdate = true;
-    }
-    if (mt2 == null || mt2.tagCount == 0) {
-      doRejectUpdate = true;
+      return;
     }
 
-    if (!doRejectUpdate) {
-      swerveDrive.setVisionMeasurementStdDevs(LimelightConstants.kMegaTag2VisionMeasurementStdDevs);
-      swerveDrive.addVisionMeasurement(
-          mt2.pose,
-          mt2.timestampSeconds);
+    for (var mt2 : Vision.useMegaTag2VisionEstimate()) {
+      if (mt2 != null && mt2.tagCount > 0) {
+        swerveDrive.setVisionMeasurementStdDevs(LimelightConstants.kMegaTag2VisionMeasurementStdDevs);
+        swerveDrive.addVisionMeasurement(
+            mt2.pose,
+            mt2.timestampSeconds);
+      }
     }
   }
 
@@ -257,11 +245,10 @@ public class SwerveSubsystem extends SubsystemBase {
   public Command aimAtTarget() {
 
     return run(() -> {
-      if (LimelightHelpers.getTargetCount(LimelightConstants.limelightNameShooter) > 0) {
+      if (Vision.getShooterTargetCount() > 0) {
         drive(getTargetSpeeds(0,
             0,
-            this.getHeading()
-                .minus(Rotation2d.fromDegrees(LimelightHelpers.getTX(LimelightConstants.limelightNameShooter)))));
+            this.getHeading().minus(Rotation2d.fromDegrees(Vision.getShooterTX()))));
       }
     });
   }
