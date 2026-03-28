@@ -150,22 +150,26 @@ public class SwerveSubsystem extends SubsystemBase {
 
   private void useMegaTag2VisionEstimate() {
     boolean doRejectUpdate = false;
+    if (DriverStation.isDisabled()) {
+      LimelightHelpers.SetIMUMode(LimelightConstants.limelightNameAprilTag, 1); // Seed internal IMU
+    } else {
+      LimelightHelpers.SetIMUMode(LimelightConstants.limelightNameAprilTag, 4); // Use internal IMU + external IMU
+    }
 
     LimelightHelpers.SetRobotOrientation(LimelightConstants.limelightNameAprilTag,
         swerveDrive.getPose().getRotation().getDegrees(), 0, 0, 0, 0, 0);
     LimelightHelpers.PoseEstimate mt2 = LimelightHelpers
         .getBotPoseEstimate_wpiBlue_MegaTag2(LimelightConstants.limelightNameAprilTag);
-    if (Math.abs(swerveDrive.getRobotVelocity().omegaRadiansPerSecond) > Units.degreesToRadians(720)) // if our angular
-    // velocity is greater
-    // than
-    // 720 degrees per second, ignore
-    // vision updates
-    {
+
+    if (Math.abs(swerveDrive.getRobotVelocity().omegaRadiansPerSecond) > Units.degreesToRadians(360)) {
+      // if our angular velocity is greater than 360 degrees per second, ignore vision
+      // updates
       doRejectUpdate = true;
     }
     if (mt2 == null || mt2.tagCount == 0) {
       doRejectUpdate = true;
     }
+
     if (!doRejectUpdate) {
       swerveDrive.setVisionMeasurementStdDevs(LimelightConstants.kMegaTag2VisionMeasurementStdDevs);
       swerveDrive.addVisionMeasurement(
