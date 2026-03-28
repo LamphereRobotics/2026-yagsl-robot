@@ -256,7 +256,8 @@ public class SwerveSubsystem extends SubsystemBase {
       if (LimelightHelpers.getTargetCount(LimelightConstants.limelightNameShooter) > 0) {
         drive(getTargetSpeeds(0,
             0,
-            Rotation2d.fromDegrees(LimelightHelpers.getTX(LimelightConstants.limelightNameShooter))));
+            this.getHeading()
+                .minus(Rotation2d.fromDegrees(LimelightHelpers.getTX(LimelightConstants.limelightNameShooter)))));
       }
     });
   }
