@@ -39,7 +39,7 @@ public class Intake extends SubsystemBase {
   }
 
   public Command outCommand() {
-    return run(this::in);
+    return run(this::out);
   }
 
   public void out() {

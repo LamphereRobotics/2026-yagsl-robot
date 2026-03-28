@@ -207,7 +207,7 @@ public class RobotContainer {
                 } else {
                         drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
                         shooter.setDefaultCommand(shooter.stopCommand());
-                        extendo.setDefaultCommand(extendo.moveCommand(() -> -operatorXbox.getLeftY()));
+                        extendo.setDefaultCommand(extendo.moveCommand(() -> operatorXbox.getLeftY()));
                         intake.setDefaultCommand(intake.stopCommand());
                         hopper.setDefaultCommand(hopper.stopCommand());
                 }
