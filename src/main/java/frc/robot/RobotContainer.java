@@ -189,7 +189,7 @@ public class RobotContainer {
                 driverXbox.leftTrigger().whileTrue(Commands.runEnd(
                                 drivebase.setMaxSpeed(Constants.MAX_SPEED * 0.5),
                                 drivebase::resetMaxSpeed));
-                driverXbox.rightTrigger().whileTrue(drivebase.aimAtTarget());
+                driverXbox.rightTrigger().whileTrue(driveAimHub);
                 // TODO: configure drive to shoot pose commands
                 // driverXbox.b().whileTrue(
                 // drivebase.driveToPose(
