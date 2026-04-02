@@ -6,12 +6,9 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.Inches;
 
-import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import swervelib.math.Matter;
 
@@ -56,13 +53,6 @@ public final class Constants {
     public static final double LEFT_Y_DEADBAND = 0.1;
     public static final double RIGHT_X_DEADBAND = 0.1;
     public static final double TURN_CONSTANT = 6;
-  }
-
-  public static final class LimelightConstants {
-    public static final boolean kUseMegaTag2 = true;
-    public static final String limelightNameAprilTag = "limelight-april";
-    public static final String limelightNameShooter = "limelight-shooter";
-    public static final Vector<N3> kMegaTag2VisionMeasurementStdDevs = VecBuilder.fill(.7, .7, 9999999);
   }
 
   public static final class TargetConstants {

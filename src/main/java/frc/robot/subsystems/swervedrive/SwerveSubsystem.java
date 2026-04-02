@@ -36,7 +36,6 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.Constants;
-import frc.robot.Constants.LimelightConstants;
 import frc.robot.Constants.TargetConstants;
 import frc.robot.subsystems.vision.Vision;
 import java.io.File;
@@ -142,28 +141,10 @@ public class SwerveSubsystem extends SubsystemBase {
     // When vision is enabled we must manually update odometry in SwerveDrive
     if (visionDriveTest) {
       swerveDrive.updateOdometry();
-      Vision.periodic(getPose());
-      useMegaTag2VisionEstimate();
+      Vision.periodic(swerveDrive);
     }
 
     SmartDashboard.putNumber(getName() + "/distanceToHub", getDistanceToHub().in(Meters));
-  }
-
-  private void useMegaTag2VisionEstimate() {
-    if (Math.abs(swerveDrive.getRobotVelocity().omegaRadiansPerSecond) > Units.degreesToRadians(720)) {
-      // if our angular velocity is greater than 720 degrees per second, ignore vision
-      // updates
-      return;
-    }
-
-    for (var mt2 : Vision.useMegaTag2VisionEstimate()) {
-      if (mt2 != null && mt2.tagCount > 0) {
-        swerveDrive.setVisionMeasurementStdDevs(LimelightConstants.kMegaTag2VisionMeasurementStdDevs);
-        swerveDrive.addVisionMeasurement(
-            mt2.pose,
-            mt2.timestampSeconds);
-      }
-    }
   }
 
   @Override
