@@ -37,10 +37,13 @@ import swervelib.SwerveInputStream;
  */
 public class RobotContainer {
 
+        // #region Controllers
         // Replace with CommandPS4Controller or CommandJoystick if needed
         final CommandXboxController driverXbox = new CommandXboxController(0);
         final CommandXboxController operatorXbox = new CommandXboxController(1);
+        // #endregion
 
+        // #region Subsystems
         // The robot's subsystems and commands are defined here...
         private final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
                         "swerve"));
@@ -48,11 +51,15 @@ public class RobotContainer {
         private final Extendo extendo = new Extendo();
         private final Intake intake = new Intake();
         private final Hopper hopper = new Hopper();
+        // #endregion
 
+        // #region Autonomous Chooser
         // Establish a Sendable Chooser that will be able to be sent to the
         // SmartDashboard, allowing selection of desired auto
         private final SendableChooser<Command> autoChooser;
+        // #endregion
 
+        // #region Driver Commands
         /**
          * Converts driver input into a field-relative ChassisSpeeds that is controlled
          * by angular velocity.
@@ -72,66 +79,59 @@ public class RobotContainer {
         SwerveInputStream driveAimBlueHubInputs = driveAim.copy().aim(TargetConstants.blueHubPose);
         SwerveInputStream driveAimRedHubInputs = driveAim.copy().aim(TargetConstants.redHubPose);
 
-        /**
-         * Clone's the angular velocity input stream and converts it to a fieldRelative
-         * input stream.
-         */
-        SwerveInputStream driveDirectAngle = driveAngularVelocity.copy()
-                        .withControllerHeadingAxis(driverXbox::getRightX,
-                                        driverXbox::getRightY)
-                        .headingWhile(true);
+        Command driveFieldOrientedAngularVelocity() {
+                return drivebase.driveFieldOriented(driveAngularVelocity);
+        }
 
-        /**
-         * Clone's the angular velocity input stream and converts it to a robotRelative
-         * input stream.
-         */
-        SwerveInputStream driveRobotOriented = driveAngularVelocity.copy().robotRelative(true)
-                        .allianceRelativeControl(false);
+        Command driveAimHub() {
+                return Commands.either(
+                                drivebase.driveFieldOriented(driveAimRedHubInputs),
+                                drivebase.driveFieldOriented(driveAimBlueHubInputs),
+                                drivebase::isRedAlliance);
+        }
 
-        SwerveInputStream driveAngularVelocityKeyboard = SwerveInputStream.of(drivebase.getSwerveDrive(),
-                        () -> -driverXbox.getLeftY(),
-                        () -> -driverXbox.getLeftX())
-                        .withControllerRotationAxis(() -> driverXbox.getRawAxis(
-                                        2))
-                        .deadband(OperatorConstants.DEADBAND)
-                        .scaleTranslation(0.8)
-                        .allianceRelativeControl(true);
+        Command driveSlowCommand() {
+                return Commands.runEnd(
+                                drivebase.setMaxSpeed(Constants.MAX_SPEED * 0.5),
+                                drivebase::resetMaxSpeed);
+        }
 
-        // Derive the heading axis with math!
-        SwerveInputStream driveDirectAngleKeyboard = driveAngularVelocityKeyboard.copy()
-                        .withControllerHeadingAxis(() -> Math.sin(
-                                        driverXbox.getRawAxis(
-                                                        2) *
-                                                        Math.PI)
-                                        *
-                                        (Math.PI *
-                                                        2),
-                                        () -> Math.cos(
-                                                        driverXbox.getRawAxis(
-                                                                        2) *
-                                                                        Math.PI)
-                                                        *
-                                                        (Math.PI *
-                                                                        2))
-                        .headingWhile(true)
-                        .translationHeadingOffset(true)
-                        .translationHeadingOffset(Rotation2d.fromDegrees(
-                                        0));
+        Command lockDrive() {
+                return Commands.runOnce(drivebase::lock, drivebase).repeatedly();
+        }
+
+        Command zeroGyro() {
+                return Commands.runOnce(drivebase::zeroGyro);
+        }
+        // #endregion
+
+        // #region Operator Commands
+        Command moveExtendoJoystick() {
+                return extendo.moveCommand(() -> operatorXbox.getLeftY());
+        }
 
         Command fullShootBlindCommand() {
                 return shooter.shootBlindCommand().until(shooter::isReadyToShoot)
                                 .andThen((hopper.inCommand()));
-        };
+        }
 
         Command fullShootHubCommand() {
-                return shooter.shootHubCommand(drivebase::getDistanceToHub).until(shooter::isReadyToShoot)
+                return shooter.shootHubCommand(drivebase::getDistanceToHub)
+                                .until(shooter::isReadyToShoot)
                                 .andThen((hopper.inCommand()));
-        };
+        }
 
         Command agitateCommand() {
                 return extendo.retractCommand().until(extendo::isAgitateRetracted)
                                 .andThen(extendo.extendCommand().until(extendo::isAgitateExtend)).repeatedly();
-        };
+        }
+
+        Command intakeCommand() {
+                return intake.inCommand().alongWith(Commands.runEnd(
+                                drivebase.setMaxSpeed(Constants.MAX_SPEED * 0.5),
+                                drivebase::resetMaxSpeed));
+        }
+        // #endregion
 
         /**
          * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -141,6 +141,7 @@ public class RobotContainer {
                 configureBindings();
                 DriverStation.silenceJoystickConnectionWarning(true);
 
+                // #region Autonomous Commands
                 // Create the NamedCommands that will be used in PathPlanner
                 NamedCommands.registerCommand("Shoot",
                                 fullShootBlindCommand().alongWith(agitateCommand()).withTimeout(6.0));
@@ -153,7 +154,7 @@ public class RobotContainer {
 
                 // Put the autoChooser on the SmartDashboard
                 SmartDashboard.putData("Auto Chooser", autoChooser);
-
+                // #endregion
         }
 
         /**
@@ -170,43 +171,40 @@ public class RobotContainer {
          * Flight joysticks}.
          */
         private void configureBindings() {
-                Command driveFieldOrientedAnglularVelocity = drivebase.driveFieldOriented(driveAngularVelocity);
-                @SuppressWarnings("unused")
-                Command driveAimHub = Commands.either(
-                                drivebase.driveFieldOriented(driveAimRedHubInputs),
-                                drivebase.driveFieldOriented(driveAimBlueHubInputs),
-                                drivebase::isRedAlliance);
-
-                drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
+                // #region Default Commands
+                drivebase.setDefaultCommand(driveFieldOrientedAngularVelocity());
                 shooter.setDefaultCommand(shooter.stopCommand());
-                extendo.setDefaultCommand(extendo.moveCommand(() -> operatorXbox.getLeftY()));
+                extendo.setDefaultCommand(moveExtendoJoystick());
                 intake.setDefaultCommand(intake.stopCommand());
                 hopper.setDefaultCommand(hopper.stopCommand());
+                // #endregion
 
-                driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
-                driverXbox.start().whileTrue(Commands.runOnce(drivebase::zeroGyro));
-                driverXbox.leftTrigger().whileTrue(Commands.runEnd(
-                                drivebase.setMaxSpeed(Constants.MAX_SPEED * 0.5),
-                                drivebase::resetMaxSpeed));
-                driverXbox.rightTrigger().whileTrue(driveAimHub);
+                // #region Driver Controls
+                driverXbox.leftBumper().whileTrue(lockDrive());
+                driverXbox.leftTrigger().whileTrue(driveSlowCommand());
+                driverXbox.rightTrigger().whileTrue(driveAimHub());
+
+                driverXbox.start().whileTrue(zeroGyro());
+
                 // TODO: configure drive to shoot pose commands
                 // driverXbox.b().whileTrue(
                 // drivebase.driveToPose(
                 // new Pose2d(new Translation2d(4, 4), Rotation2d.fromDegrees(0)))
                 // );
+                // #endregion
 
+                // #region Operator Controls
                 operatorXbox.leftTrigger().whileTrue(shooter.shootBlindCommand());
                 operatorXbox.leftBumper().whileTrue(agitateCommand());
                 operatorXbox.rightTrigger()
                                 .whileTrue(fullShootBlindCommand());
                 operatorXbox.rightBumper()
                                 .whileTrue(fullShootHubCommand());
-                operatorXbox.a().whileTrue(intake.inCommand().alongWith(Commands.runEnd(
-                                drivebase.setMaxSpeed(Constants.MAX_SPEED * 0.5),
-                                drivebase::resetMaxSpeed)));
+                operatorXbox.a().whileTrue(intakeCommand());
                 operatorXbox.b().whileTrue(intake.outCommand());
                 operatorXbox.x().whileTrue(hopper.inCommand());
                 operatorXbox.y().whileTrue(hopper.outCommand());
+                // #endregion
         }
 
         /**
