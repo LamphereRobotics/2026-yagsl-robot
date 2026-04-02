@@ -740,6 +740,7 @@ public class SwerveSubsystem extends SubsystemBase {
   }
 
   public Distance getDistanceToHub() {
-    return Meters.of(getPose().getTranslation().getDistance(TargetConstants.blueHubPose.getTranslation()));
+    Pose2d targetHubPose = isRedAlliance() ? TargetConstants.redHubPose : TargetConstants.blueHubPose;
+    return Meters.of(getPose().getTranslation().getDistance(targetHubPose.getTranslation()));
   }
 }
