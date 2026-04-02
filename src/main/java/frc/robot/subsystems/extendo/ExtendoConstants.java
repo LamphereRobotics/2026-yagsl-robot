@@ -12,14 +12,16 @@ public final class ExtendoConstants {
   public static final int extendoMotorId = 14;
   public static final int limitSwitchPort = 9;
 
-  public static final double maxVoltage = 6.0;
-  public static final double fullExtendPosition = 16.30;
+  public static final double maxVoltage = 3.0;
+  public static final double startPosition = 0.0;
+  public static final double fullRetractPosition = 0.0;
+  public static final double fullExtendPosition = 12.2;
   public static final double agitateUpPosition = fullExtendPosition * 0.25;
   public static final double agitateDownPosition = fullExtendPosition * 0.75;
 
   public static final SparkMaxConfig extendoConfig = new SparkMaxConfig();
 
   static {
-    extendoConfig.inverted(true).idleMode(IdleMode.kBrake);
+    extendoConfig.inverted(false).idleMode(IdleMode.kBrake);
   }
 }

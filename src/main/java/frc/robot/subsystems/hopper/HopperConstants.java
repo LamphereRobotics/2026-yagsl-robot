@@ -13,6 +13,9 @@ public final class HopperConstants {
   public static final int conveyorMotorId = 13;
   public static final int indexerMotorId = 9;
 
+  public static final double conveyorVoltage = 6.0;
+  public static final double indexerVoltage = 6.0;
+
   public static final SparkMaxConfig conveyorConfig = new SparkMaxConfig();
   public static final SparkFlexConfig indexerConfig = new SparkFlexConfig();
 

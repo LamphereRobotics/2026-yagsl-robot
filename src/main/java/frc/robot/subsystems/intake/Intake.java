@@ -28,6 +28,7 @@ public class Intake extends SubsystemBase {
     // This method will be called once per scheduler run
     SmartDashboard.putNumber(getName() + "/voltage",
         intakeMotor.getAppliedOutput() * intakeMotor.getBusVoltage());
+    SmartDashboard.putNumber(getName() + "/current", intakeMotor.getOutputCurrent());
   }
 
   public Command inCommand() {
@@ -35,7 +36,7 @@ public class Intake extends SubsystemBase {
   }
 
   public void in() {
-    intakeMotor.setVoltage(12);
+    intakeMotor.setVoltage(intakeVoltage);
   }
 
   public Command outCommand() {
@@ -43,7 +44,7 @@ public class Intake extends SubsystemBase {
   }
 
   public void out() {
-    intakeMotor.setVoltage(-12);
+    intakeMotor.setVoltage(-intakeVoltage);
   }
 
   public Command stopCommand() {

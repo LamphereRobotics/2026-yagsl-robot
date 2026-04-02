@@ -25,7 +25,7 @@ public class Extendo extends SubsystemBase {
   /** Creates a new Intake. */
   public Extendo() {
     extendoMotor.configure(extendoConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-    encoder.setPosition(0.0);
+    encoder.setPosition(startPosition);
   }
 
   @Override
@@ -41,8 +41,7 @@ public class Extendo extends SubsystemBase {
   }
 
   public boolean isRetracted() {
-    return encoder.getPosition() <= 0.0;
-    // return !limitSwitch.get();
+    return encoder.getPosition() <= fullRetractPosition;
   }
 
   public boolean isFullyExtended() {

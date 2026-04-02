@@ -120,12 +120,12 @@ public class RobotContainer {
 
         Command fullShootBlindCommand() {
                 return shooter.shootBlindCommand().until(shooter::isReadyToShoot)
-                                .andThen(intake.inCommand().alongWith(hopper.inCommand()));
+                                .andThen((hopper.inCommand()));
         };
 
         Command fullShootHubCommand() {
                 return shooter.shootHubCommand(drivebase::getDistanceToHub).until(shooter::isReadyToShoot)
-                                .andThen(intake.inCommand().alongWith(hopper.inCommand()));
+                                .andThen((hopper.inCommand()));
         };
 
         Command agitateCommand() {
@@ -184,8 +184,7 @@ public class RobotContainer {
                 hopper.setDefaultCommand(hopper.stopCommand());
 
                 driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
-                driverXbox.start().whileTrue(Commands.none());
-                // driverXbox.back().whileTrue(Commands.runOnce(drivebase::zeroGyro));
+                driverXbox.start().whileTrue(Commands.runOnce(drivebase::zeroGyro));
                 driverXbox.leftTrigger().whileTrue(Commands.runEnd(
                                 drivebase.setMaxSpeed(Constants.MAX_SPEED * 0.5),
                                 drivebase::resetMaxSpeed));

@@ -40,8 +40,8 @@ public class Hopper extends SubsystemBase {
   }
 
   public void in() {
-    conveyorMotor.setVoltage(6);
-    indexerMotor.setVoltage(6);
+    conveyorMotor.setVoltage(conveyorVoltage);
+    indexerMotor.setVoltage(indexerVoltage);
   }
 
   public Command outCommand() {
@@ -49,8 +49,8 @@ public class Hopper extends SubsystemBase {
   }
 
   public void out() {
-    conveyorMotor.setVoltage(-6);
-    indexerMotor.setVoltage(-6);
+    conveyorMotor.setVoltage(-conveyorVoltage);
+    indexerMotor.setVoltage(-indexerVoltage);
   }
 
   public Command stopCommand() {
