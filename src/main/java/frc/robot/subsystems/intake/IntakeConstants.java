@@ -10,11 +10,11 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 /** Add your docs here. */
 public final class IntakeConstants {
   public static final int intakeMotorId = 15;
-  public static final double intakeVoltage = 12.0;
+  public static final double intakeVoltage = 8.0;
 
   public static final SparkMaxConfig intakeConfig = new SparkMaxConfig();
 
   static {
-    intakeConfig.inverted(true).idleMode(IdleMode.kBrake).smartCurrentLimit(20);
+    intakeConfig.inverted(true).idleMode(IdleMode.kBrake).smartCurrentLimit(60);
   }
 }
