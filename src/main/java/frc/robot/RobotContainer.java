@@ -6,6 +6,7 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.events.EventTrigger;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -164,9 +165,18 @@ public class RobotContainer {
         }
 
         Command lowerAndIntakeCommand() {
-                return extendo.extendCommand()
-                                .andThen(extendo.extendCommand()
-                                                .alongWith(intake.inCommand()));
+                return intake.inCommand();
+                // return extendo.extendCommand()
+                // .until(extendo::isFullyExtended)
+                // .andThen(extendo.extendCommand()
+                // .alongWith(intake.inCommand()));
+        }
+
+        void stopAll() {
+                shooter.stop();
+                extendo.stop();
+                intake.stop();
+                hopper.stop();
         }
         // #endregion
 
@@ -182,10 +192,11 @@ public class RobotContainer {
                 // Create the NamedCommands that will be used in PathPlanner
                 NamedCommands.registerCommand("Shoot",
                                 shootAndAgitateSequenceCommand()
-                                                .withTimeout(6.0));
+                                                .withTimeout(6.0)
+                                                .finallyDo(this::stopAll));
 
-                NamedCommands.registerCommand("Intake",
-                                lowerAndIntakeCommand());
+                new EventTrigger("Intake").whileTrue(lowerAndIntakeCommand()
+                                .finallyDo(this::stopAll));
 
                 // Have the autoChooser pull in all PathPlanner autos as options
                 autoChooser = AutoBuilder.buildAutoChooser();

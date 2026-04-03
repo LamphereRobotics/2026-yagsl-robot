@@ -12,7 +12,7 @@ public final class ExtendoConstants {
   public static final int extendoMotorId = 14;
   public static final int limitSwitchPort = 9;
 
-  public static final double maxVoltage = 3.0;
+  public static final double maxVoltage = 1.5;
   public static final double startPosition = 0.0;
   public static final double fullRetractPosition = 0.0;
   public static final double fullExtendPosition = 12.2;
