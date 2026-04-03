@@ -160,7 +160,7 @@ public class RobotContainer {
         }
 
         Command intakeAndSlowCommand() {
-                return intake.inCommand()
+                return lowerAndIntakeCommand()
                                 .alongWith(Commands.runEnd(
                                                 drivebase.setMaxSpeed(Constants.MAX_SPEED * 0.5),
                                                 drivebase::resetMaxSpeed));
