@@ -6,7 +6,7 @@ package frc.robot.subsystems.intake;
 
 import static frc.robot.subsystems.intake.IntakeConstants.*;
 
-import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.PersistMode;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
@@ -17,7 +17,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Intake extends SubsystemBase {
-  private final SparkMax intakeMotor = new SparkMax(intakeMotorId, MotorType.kBrushless);
+  private final SparkFlex intakeMotor = new SparkFlex(intakeMotorId, MotorType.kBrushless);
   private final RelativeEncoder intakeEncoder = intakeMotor.getEncoder();
 
   /** Creates a new Intake. */
