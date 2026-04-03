@@ -6,8 +6,12 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.path.PathConstraints;
+import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.util.FileVersionException;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -25,6 +29,10 @@ import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 
 import java.io.File;
+import java.io.IOException;
+
+import org.json.simple.parser.ParseException;
+
 import swervelib.SwerveInputStream;
 
 /**
@@ -240,11 +248,13 @@ public class RobotContainer {
 
                 driverXbox.start().whileTrue(zeroGyro());
 
-                // TODO: configure drive to shoot pose commands
-                // driverXbox.b().whileTrue(
-                // drivebase.driveToPose(
-                // new Pose2d(new Translation2d(4, 4), Rotation2d.fromDegrees(0)))
-                // );
+                // #region Auto Path Commands
+                Command crossLeftTrenchToAlly = getPathfindThenFollowPathCommand("Cross Trench Left To Ally");
+                Command crossRightTrenchToAlly = getPathfindThenFollowPathCommand("Cross Trench Right To Ally");
+                Command crossLeftTrenchToNeutral = getPathfindThenFollowPathCommand("Cross Trench Left To Neutral");
+                Command crossRightTrenchToNeutral = getPathfindThenFollowPathCommand("Cross Trench Right To Neutral");
+
+                // #endregion
                 // #endregion
 
                 // #region Operator Controls
@@ -274,5 +284,22 @@ public class RobotContainer {
 
         public void setMotorBrake(boolean brake) {
                 drivebase.setMotorBrake(brake);
+        }
+
+        private static Command getPathfindThenFollowPathCommand(String pathFileName) {
+                PathConstraints constraints = new PathConstraints(
+                                3.0, 4.0,
+                                Units.degreesToRadians(540), Units.degreesToRadians(720));
+
+                try {
+                        PathPlannerPath path = PathPlannerPath
+                                        .fromPathFile(pathFileName);
+
+                        return AutoBuilder
+                                        .pathfindThenFollowPath(path, constraints);
+                } catch (FileVersionException | IOException | ParseException e) {
+                        // TODO: At least log issue
+                        return Commands.none();
+                }
         }
 }
