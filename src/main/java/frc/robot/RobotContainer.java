@@ -54,10 +54,12 @@ public class RobotContainer {
         private final Hopper hopper = new Hopper();
         // #endregion
 
-        // #region Autonomous Chooser
+        // #region Autonomous Setup
         // Establish a Sendable Chooser that will be able to be sent to the
         // SmartDashboard, allowing selection of desired auto
         private final SendableChooser<Command> autoChooser;
+
+        private final EventTrigger intakeTrigger = new EventTrigger("Intake");
         // #endregion
 
         // #region Driver Commands
@@ -195,7 +197,7 @@ public class RobotContainer {
                                                 .withTimeout(6.0)
                                                 .finallyDo(this::stopAll));
 
-                new EventTrigger("Intake").whileTrue(lowerAndIntakeCommand()
+                intakeTrigger.whileTrue(lowerAndIntakeCommand()
                                 .finallyDo(this::stopAll));
 
                 // Have the autoChooser pull in all PathPlanner autos as options
