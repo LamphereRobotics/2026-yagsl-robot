@@ -112,7 +112,7 @@ public class RobotContainer {
         }
 
         Command zeroGyro() {
-                return Commands.runOnce(drivebase::zeroGyro);
+                return Commands.runOnce(drivebase::zeroGyroWithAlliance);
         }
         // #endregion
 
