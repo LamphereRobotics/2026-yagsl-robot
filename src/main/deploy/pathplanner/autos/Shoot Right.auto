@@ -7,19 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Left Start To Shoot"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Shoot"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Left Pickup"
+            "pathName": "Right Start To Shoot"
           }
         },
         {
