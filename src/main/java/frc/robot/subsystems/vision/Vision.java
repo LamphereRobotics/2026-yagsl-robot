@@ -27,7 +27,7 @@ public class Vision {
       return;
     }
 
-    addVisionMeasurements(swerveDrive);
+    // addVisionMeasurements(swerveDrive);
   }
 
   private static void updateLimelights(Pose2d robotPose) {
