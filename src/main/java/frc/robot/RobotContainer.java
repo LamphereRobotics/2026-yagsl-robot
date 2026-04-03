@@ -76,8 +76,10 @@ public class RobotContainer {
                         .aimHeadingOffset(Rotation2d.k180deg)
                         .aimHeadingOffset(true)
                         .aimWhile(true);
-        SwerveInputStream driveAimBlueHubInputs = driveAim.copy().aim(TargetConstants.blueHubPose);
-        SwerveInputStream driveAimRedHubInputs = driveAim.copy().aim(TargetConstants.redHubPose);
+        SwerveInputStream driveAimBlueHubInputs = driveAim.copy()
+                        .aim(TargetConstants.blueHubPose);
+        SwerveInputStream driveAimRedHubInputs = driveAim.copy()
+                        .aim(TargetConstants.redHubPose);
 
         Command driveFieldOrientedAngularVelocity() {
                 return drivebase.driveFieldOriented(driveAngularVelocity);
@@ -97,7 +99,8 @@ public class RobotContainer {
         }
 
         Command lockDrive() {
-                return Commands.runOnce(drivebase::lock, drivebase).repeatedly();
+                return Commands.runOnce(drivebase::lock, drivebase)
+                                .repeatedly();
         }
 
         Command zeroGyro() {
@@ -110,26 +113,60 @@ public class RobotContainer {
                 return extendo.moveCommand(() -> operatorXbox.getLeftY());
         }
 
-        Command fullShootBlindCommand() {
-                return shooter.shootBlindCommand().until(shooter::isReadyToShoot)
-                                .andThen((hopper.inCommand()));
+        Command spinUpBlindCommand() {
+                return shooter.shootBlindCommand()
+                                .until(shooter::isReadyToShoot);
         }
 
-        Command fullShootHubCommand() {
+        Command spinUpHubCommand() {
                 return shooter.shootHubCommand(drivebase::getDistanceToHub)
-                                .until(shooter::isReadyToShoot)
-                                .andThen((hopper.inCommand()));
+                                .until(shooter::isReadyToShoot);
+        }
+
+        Command shootBlindAndFeedCommand() {
+                return shooter.shootBlindCommand()
+                                .alongWith(hopper.inCommand());
+        }
+
+        Command shootHubAndFeedCommand() {
+                return shooter.shootHubCommand(drivebase::getDistanceToHub)
+                                .alongWith(hopper.inCommand());
+        }
+
+        Command shootBlindSequenceCommand() {
+                return spinUpBlindCommand()
+                                .andThen(shootBlindAndFeedCommand());
+        }
+
+        Command shootHubSequenceCommand() {
+                return spinUpHubCommand()
+                                .andThen(shootHubAndFeedCommand());
         }
 
         Command agitateCommand() {
-                return extendo.retractCommand().until(extendo::isAgitateRetracted)
-                                .andThen(extendo.extendCommand().until(extendo::isAgitateExtend)).repeatedly();
+                return extendo.retractCommand()
+                                .until(extendo::isAgitateRetracted)
+                                .andThen(extendo.extendCommand()
+                                                .until(extendo::isAgitateExtend))
+                                .repeatedly();
         }
 
-        Command intakeCommand() {
-                return intake.inCommand().alongWith(Commands.runEnd(
-                                drivebase.setMaxSpeed(Constants.MAX_SPEED * 0.5),
-                                drivebase::resetMaxSpeed));
+        Command intakeAndSlowCommand() {
+                return intake.inCommand()
+                                .alongWith(Commands.runEnd(
+                                                drivebase.setMaxSpeed(Constants.MAX_SPEED * 0.5),
+                                                drivebase::resetMaxSpeed));
+        }
+
+        Command shootAndAgitateSequenceCommand() {
+                return shootBlindSequenceCommand()
+                                .alongWith(agitateCommand());
+        }
+
+        Command lowerAndIntakeCommand() {
+                return extendo.extendCommand()
+                                .andThen(extendo.extendCommand()
+                                                .alongWith(intake.inCommand()));
         }
         // #endregion
 
@@ -144,7 +181,11 @@ public class RobotContainer {
                 // #region Autonomous Commands
                 // Create the NamedCommands that will be used in PathPlanner
                 NamedCommands.registerCommand("Shoot",
-                                fullShootBlindCommand().alongWith(agitateCommand()).withTimeout(6.0));
+                                shootAndAgitateSequenceCommand()
+                                                .withTimeout(6.0));
+
+                NamedCommands.registerCommand("Intake",
+                                lowerAndIntakeCommand());
 
                 // Have the autoChooser pull in all PathPlanner autos as options
                 autoChooser = AutoBuilder.buildAutoChooser();
@@ -197,10 +238,10 @@ public class RobotContainer {
                 operatorXbox.leftTrigger().whileTrue(shooter.shootBlindCommand());
                 operatorXbox.leftBumper().whileTrue(agitateCommand());
                 operatorXbox.rightTrigger()
-                                .whileTrue(fullShootBlindCommand());
+                                .whileTrue(shootBlindSequenceCommand());
                 operatorXbox.rightBumper()
-                                .whileTrue(fullShootHubCommand());
-                operatorXbox.a().whileTrue(intakeCommand());
+                                .whileTrue(shootHubSequenceCommand());
+                operatorXbox.a().whileTrue(intakeAndSlowCommand());
                 operatorXbox.b().whileTrue(intake.outCommand());
                 operatorXbox.x().whileTrue(hopper.inCommand());
                 operatorXbox.y().whileTrue(hopper.outCommand());
