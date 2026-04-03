@@ -128,10 +128,26 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
+      "name": "Extend",
+      "waypointRelativePos": 1.0185185185184922,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "Extend"
+        }
+      }
+    },
+    {
       "name": "Intake",
       "waypointRelativePos": 1.6452991452991463,
       "endWaypointRelativePos": 3.09829059829059,
-      "command": null
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "Intake"
+        }
+      }
     }
   ],
   "globalConstraints": {

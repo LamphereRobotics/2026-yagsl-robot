@@ -6,7 +6,6 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-import com.pathplanner.lib.events.EventTrigger;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -58,8 +57,6 @@ public class RobotContainer {
         // Establish a Sendable Chooser that will be able to be sent to the
         // SmartDashboard, allowing selection of desired auto
         private final SendableChooser<Command> autoChooser;
-
-        private final EventTrigger intakeTrigger = new EventTrigger("Intake");
         // #endregion
 
         // #region Driver Commands
@@ -167,11 +164,8 @@ public class RobotContainer {
         }
 
         Command lowerAndIntakeCommand() {
-                return intake.inCommand();
-                // return extendo.extendCommand()
-                // .until(extendo::isFullyExtended)
-                // .andThen(extendo.extendCommand()
-                // .alongWith(intake.inCommand()));
+                return extendo.extendCommand()
+                                .alongWith(intake.inCommand());
         }
 
         void stopAll() {
@@ -197,8 +191,14 @@ public class RobotContainer {
                                                 .withTimeout(6.0)
                                                 .finallyDo(this::stopAll));
 
-                intakeTrigger.whileTrue(lowerAndIntakeCommand()
-                                .finallyDo(this::stopAll));
+                NamedCommands.registerCommand("Extend",
+                                extendo.extendCommand()
+                                                .until(extendo::isFullyExtended)
+                                                .finallyDo(this::stopAll));
+
+                NamedCommands.registerCommand("Intake",
+                                lowerAndIntakeCommand()
+                                                .finallyDo(this::stopAll));
 
                 // Have the autoChooser pull in all PathPlanner autos as options
                 autoChooser = AutoBuilder.buildAutoChooser();
