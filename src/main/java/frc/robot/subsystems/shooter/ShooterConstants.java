@@ -5,6 +5,7 @@
 package frc.robot.subsystems.shooter;
 
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+
 import com.revrobotics.spark.config.SparkFlexConfig;
 
 /** Add your docs here. */
@@ -24,6 +25,29 @@ public final class ShooterConstants {
   public static final SparkFlexConfig kickerConfig = new SparkFlexConfig();
   public static final SparkFlexConfig shooterLeaderConfig = new SparkFlexConfig();
   public static final SparkFlexConfig shooterFollowerConfig = new SparkFlexConfig();
+
+  // TODO: double check values here
+  public static final double[] distances = {
+      4.2,
+      3.9,
+      3.6,
+      3.3,
+      3.0,
+      2.7,
+      2.4,
+      2.1
+  };
+
+  public static final double[] voltages = {
+      5.53,
+      5.39,
+      5.25,
+      5.13,
+      5.00,
+      4.89,
+      4.79,
+      4.68
+  };
 
   static {
     kickerConfig.idleMode(IdleMode.kCoast);
