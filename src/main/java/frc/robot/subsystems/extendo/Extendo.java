@@ -33,7 +33,7 @@ public class Extendo extends SubsystemBase {
     // This method will be called once per scheduler run
     SmartDashboard.putNumber(getName() + "/voltage",
         extendoMotor.getAppliedOutput() * extendoMotor.getBusVoltage());
-
+    SmartDashboard.putNumber(getName() + "/current", extendoMotor.getOutputCurrent());
     SmartDashboard.putNumber(getName() + "/position", encoder.getPosition());
 
     SmartDashboard.putBoolean(getName() + "/isRetracted", isRetracted());

@@ -25,7 +25,9 @@ public class Shooter extends SubsystemBase {
   private final SparkFlex shooterLeaderMotor = new SparkFlex(shooterLeaderMotorId, MotorType.kBrushless);
   private final SparkFlex shooterFollowerMotor = new SparkFlex(shooterFollowerMotorId, MotorType.kBrushless);
 
-  private final RelativeEncoder shooterEncoder = shooterLeaderMotor.getEncoder();
+  private final RelativeEncoder kickerEncoder = kickerMotor.getEncoder();
+  private final RelativeEncoder shooterLeaderEncoder = shooterLeaderMotor.getEncoder();
+  private final RelativeEncoder shooterFollowerEncoder = shooterFollowerMotor.getEncoder();
 
   private double targetVelocity = 0.0;
 
@@ -43,11 +45,18 @@ public class Shooter extends SubsystemBase {
     // This method will be called once per scheduler run
     SmartDashboard.putNumber(getName() + "/kicker/voltage",
         kickerMotor.getAppliedOutput() * kickerMotor.getBusVoltage());
+    SmartDashboard.putNumber(getName() + "/kicker/current", kickerMotor.getOutputCurrent());
+    SmartDashboard.putNumber(getName() + "/kicker/velocity", kickerEncoder.getVelocity());
+
     SmartDashboard.putNumber(getName() + "/leader/voltage",
         shooterLeaderMotor.getAppliedOutput() * shooterLeaderMotor.getBusVoltage());
-    SmartDashboard.putNumber(getName() + "/leader/velocity", shooterEncoder.getVelocity());
+    SmartDashboard.putNumber(getName() + "/leader/current", shooterLeaderMotor.getOutputCurrent());
+    SmartDashboard.putNumber(getName() + "/leader/velocity", shooterLeaderEncoder.getVelocity());
+
     SmartDashboard.putNumber(getName() + "/follower/voltage",
         shooterFollowerMotor.getAppliedOutput() * shooterFollowerMotor.getBusVoltage());
+    SmartDashboard.putNumber(getName() + "/follower/current", shooterFollowerMotor.getOutputCurrent());
+    SmartDashboard.putNumber(getName() + "/follower/velocity", shooterFollowerEncoder.getVelocity());
   }
 
   public Command shootHubCommand(Supplier<Distance> distanceToHub) {
@@ -91,6 +100,6 @@ public class Shooter extends SubsystemBase {
   }
 
   public boolean isReadyToShoot() {
-    return targetVelocity > 100.0 && shooterEncoder.getVelocity() > targetVelocity;
+    return targetVelocity > 100.0 && shooterLeaderEncoder.getVelocity() > targetVelocity;
   }
 }

@@ -8,6 +8,7 @@ import static frc.robot.subsystems.intake.IntakeConstants.*;
 
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.PersistMode;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
@@ -17,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Intake extends SubsystemBase {
   private final SparkMax intakeMotor = new SparkMax(intakeMotorId, MotorType.kBrushless);
+  private final RelativeEncoder intakeEncoder = intakeMotor.getEncoder();
 
   /** Creates a new Intake. */
   public Intake() {
@@ -29,6 +31,7 @@ public class Intake extends SubsystemBase {
     SmartDashboard.putNumber(getName() + "/voltage",
         intakeMotor.getAppliedOutput() * intakeMotor.getBusVoltage());
     SmartDashboard.putNumber(getName() + "/current", intakeMotor.getOutputCurrent());
+    SmartDashboard.putNumber(getName() + "/velocity", intakeEncoder.getVelocity());
   }
 
   public Command inCommand() {

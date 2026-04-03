@@ -8,6 +8,7 @@ import static frc.robot.subsystems.hopper.HopperConstants.*;
 
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.PersistMode;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkMax;
@@ -20,6 +21,9 @@ public class Hopper extends SubsystemBase {
   private final SparkMax conveyorMotor = new SparkMax(conveyorMotorId, MotorType.kBrushless);
   private final SparkFlex indexerMotor = new SparkFlex(indexerMotorId, MotorType.kBrushless);
 
+  private final RelativeEncoder conveyorEncoder = conveyorMotor.getEncoder();
+  private final RelativeEncoder indexerEncoder = indexerMotor.getEncoder();
+
   /** Creates a new Hopper. */
   public Hopper() {
     conveyorMotor.configure(conveyorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
@@ -31,8 +35,15 @@ public class Hopper extends SubsystemBase {
     // This method will be called once per scheduler run
     SmartDashboard.putNumber(getName() + "/conveyor/voltage",
         conveyorMotor.getAppliedOutput() * conveyorMotor.getBusVoltage());
+    SmartDashboard.putNumber(getName() + "/conveyor/current", conveyorMotor.getOutputCurrent());
+    SmartDashboard.putNumber(getName() + "/conveyor/velocity",
+        conveyorEncoder.getVelocity());
+
     SmartDashboard.putNumber(getName() + "/indexer/voltage",
         indexerMotor.getAppliedOutput() * indexerMotor.getBusVoltage());
+    SmartDashboard.putNumber(getName() + "/indexer/current", conveyorMotor.getOutputCurrent());
+    SmartDashboard.putNumber(getName() + "/indexer/velocity",
+        indexerEncoder.getVelocity());
   }
 
   public Command inCommand() {
