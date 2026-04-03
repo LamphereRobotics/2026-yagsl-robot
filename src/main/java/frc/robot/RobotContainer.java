@@ -249,9 +249,13 @@ public class RobotContainer {
                 driverXbox.start().whileTrue(zeroGyro());
 
                 // #region Auto Path Commands
+                @SuppressWarnings("unused")
                 Command crossLeftTrenchToAlly = getPathfindThenFollowPathCommand("Cross Trench Left To Ally");
+                @SuppressWarnings("unused")
                 Command crossRightTrenchToAlly = getPathfindThenFollowPathCommand("Cross Trench Right To Ally");
+                @SuppressWarnings("unused")
                 Command crossLeftTrenchToNeutral = getPathfindThenFollowPathCommand("Cross Trench Left To Neutral");
+                @SuppressWarnings("unused")
                 Command crossRightTrenchToNeutral = getPathfindThenFollowPathCommand("Cross Trench Right To Neutral");
 
                 // #endregion
