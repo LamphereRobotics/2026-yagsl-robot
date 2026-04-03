@@ -126,6 +126,11 @@ public class RobotContainer {
                                 .until(shooter::isReadyToShoot);
         }
 
+        Command spinUpFerryCommand() {
+                return shooter.shootFerryCommand()
+                                .until(shooter::isReadyToShoot);
+        }
+
         Command spinUpHubCommand() {
                 return shooter.shootHubCommand(drivebase::getDistanceToHub)
                                 .until(shooter::isReadyToShoot);
@@ -141,6 +146,11 @@ public class RobotContainer {
                                 .alongWith(hopper.inCommand());
         }
 
+        Command shootFerryAndFeedCommand() {
+                return shooter.shootFerryCommand()
+                                .alongWith(hopper.inCommand());
+        }
+
         Command shootBlindSequenceCommand() {
                 return spinUpBlindCommand()
                                 .andThen(shootBlindAndFeedCommand());
@@ -149,6 +159,11 @@ public class RobotContainer {
         Command shootHubSequenceCommand() {
                 return spinUpHubCommand()
                                 .andThen(shootHubAndFeedCommand());
+        }
+
+        Command shootFerrySequenceCommand() {
+                return spinUpFerryCommand()
+                                .andThen(shootFerryAndFeedCommand());
         }
 
         Command agitateCommand() {
@@ -259,12 +274,13 @@ public class RobotContainer {
                 // #endregion
 
                 // #region Operator Controls
-                operatorXbox.leftTrigger().whileTrue(shooter.shootBlindCommand());
                 operatorXbox.leftBumper().whileTrue(agitateCommand());
                 operatorXbox.rightTrigger()
                                 .whileTrue(shootBlindSequenceCommand());
                 operatorXbox.rightBumper()
                                 .whileTrue(shootHubSequenceCommand());
+                operatorXbox.leftTrigger()
+                                .whileTrue(shootFerrySequenceCommand());
                 operatorXbox.a().whileTrue(intakeAndSlowCommand());
                 operatorXbox.b().whileTrue(intake.outCommand());
                 operatorXbox.x().whileTrue(hopper.inCommand());

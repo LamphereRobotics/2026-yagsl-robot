@@ -80,6 +80,15 @@ public class Shooter extends SubsystemBase {
     shoot(blindVoltage);
   }
 
+  public Command shootFerryCommand() {
+    return run(this::shootFerry);
+  }
+
+  public void shootFerry() {
+    kick();
+    shoot(ferryVoltage);
+  }
+
   private void shoot(double output) {
     targetVelocity = output * velocityPerVolt;
     shooterLeaderMotor.setVoltage(output);

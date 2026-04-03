@@ -16,6 +16,7 @@ public final class ShooterConstants {
 
   public static final double kickVoltage = 3.5;
 
+  public static final double ferryVoltage = 7.0;
   public static final double blindVoltage = 5.25;
   public static final double blindTargetVelocity = 2800.0;
   public static final double blindDistance = 3.6;
