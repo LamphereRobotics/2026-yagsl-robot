@@ -23,6 +23,10 @@ public class Vision {
   public static void periodic(SwerveDrive swerveDrive) {
     updateLimelights(swerveDrive.getPose());
 
+    if (true) {
+      return;
+    }
+
     if (shouldIgnoreVision(swerveDrive)) {
       return;
     }
