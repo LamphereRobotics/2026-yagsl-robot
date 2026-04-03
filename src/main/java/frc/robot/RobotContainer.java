@@ -211,9 +211,6 @@ public class RobotContainer {
                 // Have the autoChooser pull in all PathPlanner autos as options
                 autoChooser = AutoBuilder.buildAutoChooser();
 
-                // Set the default auto (do nothing)
-                autoChooser.setDefaultOption("Do Nothing", Commands.none());
-
                 // Put the autoChooser on the SmartDashboard
                 SmartDashboard.putData("Auto Chooser", autoChooser);
                 // #endregion
