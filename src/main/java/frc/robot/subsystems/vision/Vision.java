@@ -7,11 +7,16 @@ package frc.robot.subsystems.vision;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystems.vision.LimelightHelpers.PoseEstimate;
 import swervelib.SwerveDrive;
 
 /** Add your docs here. */
 public class Vision {
+  private static final Field2d aprilField = new Field2d();
+  private static final Field2d shooterField = new Field2d();
+
   public static double getShooterTX() {
     return LimelightHelpers.getTX(LimelightConstants.limelightNameShooter);
   }
@@ -27,7 +32,7 @@ public class Vision {
       return;
     }
 
-    // addVisionMeasurements(swerveDrive);
+    addVisionMeasurements(swerveDrive);
   }
 
   private static void updateLimelights(Pose2d robotPose) {
@@ -58,6 +63,12 @@ public class Vision {
         LimelightHelpers
             .getBotPoseEstimate_wpiBlue_MegaTag2(LimelightConstants.limelightNameShooter)
     };
+
+    aprilField.setRobotPose(estimates[0].pose);
+    shooterField.setRobotPose(estimates[1].pose);
+
+    SmartDashboard.putData("Vision/" + LimelightConstants.limelightNameAprilTag, aprilField);
+    SmartDashboard.putData("Vision/" + LimelightConstants.limelightNameShooter, shooterField);
 
     for (var estimate : estimates) {
       if (estimate != null && estimate.tagCount > 0) {
