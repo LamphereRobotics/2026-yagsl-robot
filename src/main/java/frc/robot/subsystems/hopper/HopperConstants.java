@@ -20,7 +20,7 @@ public final class HopperConstants {
   public static final SparkFlexConfig indexerConfig = new SparkFlexConfig();
 
   static {
-    conveyorConfig.inverted(true).idleMode(IdleMode.kCoast);
-    indexerConfig.inverted(false).idleMode(IdleMode.kBrake);
+    conveyorConfig.inverted(true).idleMode(IdleMode.kCoast).smartCurrentLimit(30);
+    indexerConfig.inverted(false).idleMode(IdleMode.kBrake).smartCurrentLimit(30);
   }
 }

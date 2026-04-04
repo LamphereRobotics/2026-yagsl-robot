@@ -51,10 +51,10 @@ public final class ShooterConstants {
   };
 
   static {
-    kickerConfig.idleMode(IdleMode.kCoast);
+    kickerConfig.idleMode(IdleMode.kCoast).smartCurrentLimit(30);
 
-    shooterLeaderConfig.inverted(true).idleMode(IdleMode.kCoast);
+    shooterLeaderConfig.inverted(true).idleMode(IdleMode.kCoast).smartCurrentLimit(40);
 
-    shooterFollowerConfig.follow(shooterLeaderMotorId, true).idleMode(IdleMode.kCoast);
+    shooterFollowerConfig.follow(shooterLeaderMotorId, true).idleMode(IdleMode.kCoast).smartCurrentLimit(40);
   }
 }

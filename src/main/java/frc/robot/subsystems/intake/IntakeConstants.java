@@ -15,6 +15,6 @@ public final class IntakeConstants {
   public static final SparkMaxConfig intakeConfig = new SparkMaxConfig();
 
   static {
-    intakeConfig.inverted(true).idleMode(IdleMode.kBrake).smartCurrentLimit(60);
+    intakeConfig.inverted(true).idleMode(IdleMode.kBrake).smartCurrentLimit(40);
   }
 }

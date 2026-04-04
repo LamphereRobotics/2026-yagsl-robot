@@ -22,6 +22,6 @@ public final class ExtendoConstants {
   public static final SparkMaxConfig extendoConfig = new SparkMaxConfig();
 
   static {
-    extendoConfig.inverted(false).idleMode(IdleMode.kBrake);
+    extendoConfig.inverted(false).idleMode(IdleMode.kBrake).smartCurrentLimit(30);
   }
 }
