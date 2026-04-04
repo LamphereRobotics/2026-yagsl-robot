@@ -7,6 +7,7 @@ package frc.robot;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
@@ -27,6 +28,7 @@ public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
   private RobotContainer m_robotContainer;
+  private PowerDistribution pdh;
 
   private Timer disabledTimer;
 
@@ -53,6 +55,7 @@ public class Robot extends TimedRobot {
     // and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
+    pdh = new PowerDistribution();
 
     // Create a timer to disable motor brake a few seconds after disable. This will
     // let the robot stop
@@ -88,6 +91,7 @@ public class Robot extends TimedRobot {
 
     SmartDashboard.putNumber("Robot/matchTime", DriverStation.getMatchTime());
     SmartDashboard.putNumber("Robot/batteryVoltage", RobotController.getBatteryVoltage());
+    SmartDashboard.putData("Robot/pdh", pdh);
 
     SmartDashboard.putBoolean("Match/isHubActive", FieldShifts.isHubActive());
     SmartDashboard.putNumber("Match/remainingShiftTime", FieldShifts.remainingShiftTime());
